@@ -35,7 +35,7 @@
 		<hr>
 
 		<h3><strong>Question 1</strong></h3>
-		<h4>Your mind is always buzzing with unexplored ideas and plans.</h4>
+		<h4>You follow politics very closely.</h4>
 	 	<select data-placeholder="" class="chosen-select" id="q1">
 	 		<option value=""></option>
             <option value="1">1 (Strongly Disagree)</option>
@@ -46,7 +46,7 @@
       	</select>
 
 		<h3><strong>Question 2</strong></h3>
-		<h4>Generally speaking, you rely more on your experience than your imagination.</h4>
+		<h4>You watch a lot of TV.</h4>
 	 	<select data-placeholder="" class="chosen-select" id="q2">
 	 		<option value=""></option>
             <option value="1">1 (Strongly Disagree)</option>
@@ -58,7 +58,7 @@
 
 
 		<h3><strong>Question 3</strong></h3>
-		<h4>You find it easy to stay relaxed and focused even when there is some pressure.</h4>
+		<h4>You prefer fiction over non-fiction.</h4>
 	 	<select data-placeholder="" class="chosen-select" id="q3">
 	 		<option value=""></option>
             <option value="1">1 (Strongly Disagree)</option>
@@ -70,7 +70,7 @@
 
 
 		<h3><strong>Question 4</strong></h3>
-		<h4>You rarely do something just out of sheer curiosity.</h4>
+		<h4>You prefer reality or live events.</h4>
 	 	<select data-placeholder="" class="chosen-select" id="q4">
 	 		<option value=""></option>
             <option value="1">1 (Strongly Disagree)</option>
@@ -82,7 +82,7 @@
 
 
 		<h3><strong>Question 5</strong></h3>
-		<h4>People can rarely upset you.</h4>
+		<h4>You watch a lot of sports.</h4>
 	 	<select data-placeholder="" class="chosen-select" id="q5">
 	 		<option value=""></option>
             <option value="1">1 (Strongly Disagree)</option>
@@ -94,7 +94,7 @@
 
 
 		<h3><strong>Question 6</strong></h3>
-		<h4>It is often difficult for you to relate to other people’s feelings.</h4>
+		<h4>You enjoy gossip.</h4>
 	 	<select data-placeholder="" class="chosen-select" id="q6">
 	 		<option value=""></option>
             <option value="1">1 (Strongly Disagree)</option>
@@ -106,7 +106,7 @@
 
 
 		<h3><strong>Question 7</strong></h3>
-		<h4>In a discussion, truth should be more important than people’s sensitivities.</h4>
+		<h4>You watch the network news on a regular basis.</h4>
 	 	<select data-placeholder="" class="chosen-select" id="q7">
 	 		<option value=""></option>
             <option value="1">1 (Strongly Disagree)</option>
@@ -117,7 +117,7 @@
       	</select>
 
 		<h3><strong>Question 8</strong></h3>
-		<h4>You rarely get carried away by fantasies and ideas.</h4>
+		<h4>You follow world events very closely.</h4>
 	 	<select data-placeholder="" class="chosen-select" id="q8">
 	 		<option value=""></option>
             <option value="1">1 (Strongly Disagree)</option>
@@ -128,7 +128,7 @@
       	</select>
 
 		<h3><strong>Question 9</strong></h3>
-		<h4>You think that everyone’s views should be respected regardless of whether they are supported by facts or not.</h4>
+		<h4>You are easily entertained.</h4>
 	 	<select data-placeholder="" class="chosen-select" id="q9">
 	 		<option value=""></option>
             <option value="1">1 (Strongly Disagree)</option>
@@ -139,7 +139,7 @@
       	</select>
 
 		<h3><strong>Question 10</strong></h3>
-		<h4>You feel more energetic after spending time with a group of people.</h4>
+		<h4>You don't watch much TV and prefer going out.</h4>
 	 	<select data-placeholder="" class="chosen-select" id="q10">
 	 		<option value=""></option>
             <option value="1">1 (Strongly Disagree)</option>
@@ -234,26 +234,53 @@
 	    	// Grab the URL of the website
 	    	var currentURL = window.location.origin;
 
-	    	// AJAX post the data to the friends API. 
-	    	$.post(currentURL + "/api/friends", userData, function(data){
+	    	
 
-	    		// Grab the result from the AJAX post so that the best match's name and photo are displayed.
-	    		$("#matchName").text(data.name);
-	    		$('#matchImg').attr("src", data.photo);
-
-		    	// Show the modal with the best match 
-		    	$("#resultsModal").modal('toggle');
-
-	    	});
+            function(data){});
+			//access our array of potential friends so we can analyze it for the best match
+			$.ajax({url: currentURL + "./data./public/friends", method: "GET"}).done(function(res){
+					
+				var bestFriend;
+				var currentBest = 100;
+				var differenceArray = [];
+				//loops through all friends with the exception of the one just created
+				for(i=0; i < res.length - 1; i++){
+					//compares the values from the survey questions and pushes the absolute value of the differences to the difference array
+					for(j=0; j<10; j++){
+						var currentDifference = newFriend.scores[j] - res[i].scores[j];
+						differenceArray.push(Math.abs(currentDifference));
+					}
+					//adds the values in the array to give a single value that represents the difference between a potential friend and the current entry
+					var difference = differenceArray.reduce(add, 0);
+					//if the difference is less than any of the previous comparisons, push the current profile to the best match position
+					if(difference < currentBest){
+						bestFriend = res[i];
+						currentBest = difference;
+						differenceArray = [];
+					}
+					//or just move on
+					else{
+						differenceArray =[];
+					}
+					
+				}
+				//set up the display for the modal
+				var friendName = '<h4>' + bestFriend.name + '<h4>';
+				var friendPic = '<img width="300px" src=' + bestFriend.photo + '>';
+				//show the modal
+				$('#resultsModal').modal('toggle');
+				$('#matchName').html(dataName);
+				$('#matchImg').attr('src', data.photo);
+				//clear the entries
+				$('#survey')[0].reset();
+				
+			});
 		}
-		else
-		{
-			alert("Please fill out all fields before submitting!");
-		}
-    	
-    	return false;
-    });
-
+return false;
+});
+function add(a, b){
+	return a+b;
+};
 
   </script>
 
