@@ -159,7 +159,7 @@
 		<hr>
 	    <footer class="footer">
 	      <div class="container">
-		        <p><a href="/api/friends">API Friends List</a> | <a href="https://github.com/afhaque/friendfinder">GitHub Repo</a></p>
+		        <p><a href="../data/public/friends">API Friends List</a> | <a href="https://github.com/monfrair/friendfinder2">GitHub Repo</a></p>
 	      </div>
 	    </footer>
 
@@ -238,7 +238,7 @@
 
             function(data){});
 			//access our array of potential friends so we can analyze it for the best match
-			$.ajax({url: currentURL + "./data./public/friends", method: "GET"}).done(function(res){
+			$.ajax({url: currentURL + ".../data/public/friends", method: "GET"}).done(function(res){
 					
 				var bestFriend;
 				var currentBest = 100;
